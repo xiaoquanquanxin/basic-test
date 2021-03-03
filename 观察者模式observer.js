@@ -15,21 +15,27 @@ EventEmitter.prototype.subscribe = function (event, fn){
     }
     this.eventList.set(event, fn);
 };
+//  退订
+EventEmitter.prototype.unSubscribe = function (event,){
+    if (this.eventList.get(event)) {
+        this.eventList.delete(event);
+    }
+};
+
 
 const event1 = new EventEmitter();
-const event2 = new EventEmitter();
 console.log(event1);
-console.log(event2);
 //  订阅
-event1.subscribe('up', (a, b, c,) => {
+event1.subscribe('up', function (a, b, c,){
     console.log(a, b, c,);
-    return 123;
+    console.log(this);
+    return a + b + c;
 });
 
 event1.emit('up', 1, 2, 4);
 event1.emit('up', 1, 2, 4);
-const a = event1.emit('up', 1, 2, 4);
-console.log(a);
 
-
-
+//  退订
+event1.unSubscribe('up');
+//  没有订阅
+event1.emit('up');
