@@ -1,41 +1,48 @@
-function EventEmitter(){
-    this.eventList = this.eventList || new Map();
+//  被观察者
+class Observable {
+    constructor(set){
+        this.set = set;
+    }
+
+    subscribe(observer){
+        this.set.add(observer);
+    }
+
+    unSubscribe(observable){
+        this.set.delete(observable);
+    }
+
+    emit(...arg){
+        const set = this.set.entries();
+        for (const [key, value] of set) {
+            value.next(...arg);
+        }
+    }
 }
 
-EventEmitter.prototype.emit = function (event){
-    const handle = this.eventList.get(event);
-    if (!handle) {
-        throw new Error('没有订阅 event');
+//  观察者对象
+const observer1 = {
+    next({name}){
+        console.log('observer1', name);
     }
-    return handle.call(this, ...[...arguments].slice(1));
 };
-EventEmitter.prototype.subscribe = function (event, fn){
-    if (this.eventList.has(event)) {
-        return;
-    }
-    this.eventList.set(event, fn);
-};
-//  退订
-EventEmitter.prototype.unSubscribe = function (event,){
-    if (this.eventList.get(event)) {
-        this.eventList.delete(event);
+const observer2 = {
+    next({name}){
+        console.log('observer2', name);
     }
 };
 
+function ObservableGenerator(){
+    return new Observable(new Set);
+}
 
-const event1 = new EventEmitter();
-console.log(event1);
-//  订阅
-event1.subscribe('up', function (a, b, c,){
-    console.log(a, b, c,);
-    console.log(this);
-    return a + b + c;
-});
+//  被观察者实例
+const observable = new ObservableGenerator();
+observable.subscribe(observer1);
+observable.subscribe(observer2);
+observable.emit({name: '1'});
+observable.emit({name: '2'});
+observable.unSubscribe(observer1);
+observable.emit({name: '3'});
 
-event1.emit('up', 1, 2, 4);
-event1.emit('up', 1, 2, 4);
 
-//  退订
-event1.unSubscribe('up');
-//  没有订阅
-event1.emit('up');
