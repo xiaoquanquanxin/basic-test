@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>vue，包含批处理</title>
+</head>
+<body>
+<div id="app">
+    <div id="div" v-text="msg"></div>
+    <input type="text" id="input" v-model="msg">
+</div>
+<button id="button">button</button>
+<script src="js/index.js"></script>
+<script src="js/observer.js"></script>
+<script src="js/compiler.js"></script>
+<script src="js/watcher.js"></script>
+<script src="js/schedule.js"></script>
+<script src="js/dep.js"></script>
+<script>
+    const vue = new Vue({el: '#app', data: {msg: 1}})
+    document.getElementById('button').onclick = function () {
+        for (let i = 0; i < 123; i++) {
+            vue.msg++;
+        }
+    }
+</script>
+</body>
+</html>
